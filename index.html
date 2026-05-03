@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<!-- v4 - full field sequence, no GO button, voice bleep fix -->
 <title>Calliper Reader</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
@@ -642,22 +645,36 @@ function toggleVoice() { voiceActive ? stopVoice() : startVoice(); }
 function startVoice() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { setStatus('Voice not supported in this browser', 'err'); return; }
+  voiceActive = true;
+  document.getElementById('btn-voice').classList.add('listening');
+  document.getElementById('voice-hint').classList.add('visible');
+  setStatus('Voice active', 'ok');
+  startRecognitionSession();
+}
+
+function startRecognitionSession() {
+  if (!voiceActive) return;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SR();
   recognition.continuous = true;
   recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
   recognition.lang = 'en-GB';
   recognition.onresult = e => {
     const t = e.results[e.results.length - 1][0].transcript.trim().toLowerCase();
     showHeard(t);
     handleVoice(t);
   };
-  recognition.onerror = e => { if (e.error === 'not-allowed') stopVoice(); };
-  recognition.onend = () => { if (voiceActive) recognition.start(); };
-  recognition.start();
-  voiceActive = true;
-  document.getElementById('btn-voice').classList.add('listening');
-  document.getElementById('voice-hint').classList.add('visible');
-  setStatus('Voice active', 'ok');
+  recognition.onerror = e => {
+    if (e.error === 'not-allowed') { stopVoice(); return; }
+    // On no-speech or other errors, restart quietly after a pause
+    if (voiceActive) setTimeout(startRecognitionSession, 800);
+  };
+  recognition.onend = () => {
+    // Restart after a pause to avoid rapid restart chimes
+    if (voiceActive) setTimeout(startRecognitionSession, 500);
+  };
+  try { recognition.start(); } catch(e) { /* already started */ }
 }
 
 function stopVoice() {
