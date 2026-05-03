@@ -7,426 +7,133 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=DM+Sans:wght@300;400;500&display=swap');
-
 :root {
-  --bg: #0a0c0b;
-  --surface: #111412;
-  --panel: #161a17;
-  --border: #232b25;
-  --green: #52e87a;
-  --green-dim: #163d22;
-  --green-mid: #2a7042;
-  --amber: #f0b94a;
-  --red: #f05a5a;
-  --blue: #5ab4f0;
-  --text: #cce3d0;
-  --muted: #4d6b54;
-  --faint: #1e2820;
+  --bg:#0a0c0b; --panel:#161a17; --border:#232b25;
+  --green:#52e87a; --green-dim:#163d22; --green-mid:#2a7042;
+  --amber:#f0b94a; --red:#f05a5a; --blue:#5ab4f0; --purple:#b07af0;
+  --text:#cce3d0; --muted:#4d6b54; --faint:#1e2820;
 }
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-weight:300; min-height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+header { display:flex; align-items:center; justify-content:space-between; padding:13px 16px 11px; border-bottom:1px solid var(--border); flex-shrink:0; }
+.header-left { display:flex; align-items:baseline; gap:9px; }
+header h1 { font-family:'Share Tech Mono',monospace; font-size:1.05rem; color:var(--green); letter-spacing:0.14em; }
+header .sub { font-size:0.82rem; color:var(--muted); }
+#auth-btn { font-family:'Share Tech Mono',monospace; font-size:0.78rem; background:none; border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:3px; cursor:pointer; }
+#auth-btn.connected { border-color:var(--green-mid); color:var(--green); }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 300;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
+#setup-screen { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 24px; gap:20px; text-align:center; }
+#setup-screen h2 { font-family:'Share Tech Mono',monospace; color:var(--green); font-size:1.1rem; letter-spacing:0.12em; }
+#setup-screen p { font-size:0.92rem; color:var(--muted); line-height:1.65; max-width:320px; }
+#setup-screen input { width:100%; max-width:360px; background:var(--panel); border:1px solid var(--border); color:var(--text); font-family:'Share Tech Mono',monospace; font-size:0.88rem; padding:13px 14px; border-radius:4px; outline:none; }
+#setup-screen input:focus { border-color:var(--green-mid); }
+.setup-btn { background:var(--green-dim); border:1px solid var(--green-mid); color:var(--green); font-family:'DM Sans',sans-serif; font-weight:500; font-size:0.92rem; letter-spacing:0.1em; text-transform:uppercase; padding:13px 28px; border-radius:4px; cursor:pointer; }
 
-/* ── HEADER ── */
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px 10px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.header-left { display: flex; align-items: baseline; gap: 9px; }
-header h1 {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.95rem;
-  color: var(--green);
-  letter-spacing: 0.14em;
-}
-header .sub { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.06em; }
-#auth-btn {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-#auth-btn.connected { border-color: var(--green-mid); color: var(--green); }
-#auth-btn:active { opacity: 0.7; }
+#app { flex:1; display:none; flex-direction:column; overflow:hidden; }
 
-/* ── SETUP SCREEN ── */
-#setup-screen {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 24px;
-  gap: 20px;
-  text-align: center;
-}
-#setup-screen h2 {
-  font-family: 'Share Tech Mono', monospace;
-  color: var(--green);
-  font-size: 1rem;
-  letter-spacing: 0.12em;
-}
-#setup-screen p {
-  font-size: 0.82rem;
-  color: var(--muted);
-  line-height: 1.65;
-  max-width: 320px;
-}
-#setup-screen input {
-  width: 100%;
-  max-width: 360px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.78rem;
-  padding: 12px 14px;
-  border-radius: 4px;
-  outline: none;
-  letter-spacing: 0.04em;
-}
-#setup-screen input:focus { border-color: var(--green-mid); }
-.setup-btn {
-  background: var(--green-dim);
-  border: 1px solid var(--green-mid);
-  color: var(--green);
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
-  font-size: 0.82rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 12px 28px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.setup-btn:active { background: var(--green-mid); }
+#camera-wrap { position:relative; background:#000; flex-shrink:0; }
+#camera-wrap.hidden { display:none; }
+#video { width:100%; display:block; max-height:30dvh; object-fit:cover; }
+#canvas { display:none; }
+.guide { position:absolute; inset:0; pointer-events:none; }
+.guide-box { position:absolute; top:15%; left:12%; right:12%; bottom:15%; border:1px solid rgba(82,232,122,0.25); border-radius:2px; }
+.corner { position:absolute; width:12px; height:12px; border-color:var(--green); border-style:solid; opacity:0.7; }
+.corner.tl { top:14%; left:11%; border-width:2px 0 0 2px; }
+.corner.tr { top:14%; right:11%; border-width:2px 2px 0 0; }
+.corner.bl { bottom:14%; left:11%; border-width:0 0 2px 2px; }
+.corner.br { bottom:14%; right:11%; border-width:0 2px 2px 0; }
+.proc-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center; font-family:'Share Tech Mono',monospace; color:var(--green); font-size:0.9rem; letter-spacing:0.1em; gap:10px; }
+.proc-overlay.active { display:flex; }
+.spinner { width:18px; height:18px; border:2px solid var(--green-dim); border-top-color:var(--green); border-radius:50%; animation:spin 0.7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-/* ── MAIN APP ── */
-#app { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+#field-indicator { background:var(--panel); border-bottom:1px solid var(--border); padding:11px 14px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+#field-type-badge { font-family:'Share Tech Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; padding:3px 8px; border-radius:3px; flex-shrink:0; }
+#field-type-badge.camera   { background:var(--green-dim); color:var(--green); }
+#field-type-badge.voice    { background:#1a1030; color:var(--purple); }
+#field-type-badge.dropdown { background:#0f1a30; color:var(--blue); }
+#field-name { font-family:'Share Tech Mono',monospace; font-size:1.05rem; color:var(--amber); flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#row-tag { font-family:'Share Tech Mono',monospace; font-size:0.82rem; color:var(--blue); white-space:nowrap; }
+#field-reading { font-family:'Share Tech Mono',monospace; font-size:1.5rem; color:var(--green); letter-spacing:0.04em; white-space:nowrap; }
+#field-reading.empty { color:var(--muted); font-size:0.9rem; }
+#field-reading.err { color:var(--red); font-size:0.82rem; }
 
-/* ── CAMERA ── */
-#camera-wrap {
-  position: relative;
-  background: #000;
-  flex-shrink: 0;
-}
-#video {
-  width: 100%;
-  display: block;
-  max-height: 36dvh;
-  object-fit: cover;
-}
-#canvas { display: none; }
+#progress-dots { display:flex; gap:5px; align-items:center; padding:8px 14px; border-bottom:1px solid var(--border); flex-shrink:0; overflow-x:auto; }
+.dot-item { display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; flex-shrink:0; padding:2px 4px; border-radius:3px; }
+.dot { width:10px; height:10px; border-radius:50%; background:var(--border); border:1px solid var(--muted); transition:all 0.2s; }
+.dot.camera-dot   { border-color:var(--green-mid); }
+.dot.voice-dot    { border-color:#5a3a9a; }
+.dot.dropdown-dot { border-color:#1a4a7a; }
+.dot.active.camera-dot   { background:var(--green);  border-color:var(--green);  box-shadow:0 0 6px var(--green); }
+.dot.active.voice-dot    { background:var(--purple); border-color:var(--purple); box-shadow:0 0 6px var(--purple); }
+.dot.active.dropdown-dot { background:var(--blue);   border-color:var(--blue);   box-shadow:0 0 6px var(--blue); }
+.dot.done    { background:var(--green); border-color:var(--green); }
+.dot.skipped { background:var(--faint); border-color:var(--border); }
+.dot-label { font-family:'Share Tech Mono',monospace; font-size:0.6rem; color:var(--muted); text-align:center; white-space:nowrap; }
+.dot-item.active-item .dot-label { color:var(--amber); }
+.dot-item.done-item .dot-label   { color:var(--green); }
 
-/* Guide frame */
-.guide {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-.guide-box {
-  position: absolute;
-  top: 15%; left: 12%; right: 12%; bottom: 15%;
-  border: 1px solid rgba(82,232,122,0.25);
-  border-radius: 2px;
-}
-.corner { position: absolute; width: 12px; height: 12px; border-color: var(--green); border-style: solid; opacity: 0.7; }
-.corner.tl { top: 14%; left: 11%; border-width: 2px 0 0 2px; }
-.corner.tr { top: 14%; right: 11%; border-width: 2px 2px 0 0; }
-.corner.bl { bottom: 14%; left: 11%; border-width: 0 0 2px 2px; }
-.corner.br { bottom: 14%; right: 11%; border-width: 0 2px 2px 0; }
-
-.proc-overlay {
-  position: absolute; inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Share Tech Mono', monospace;
-  color: var(--green);
-  font-size: 0.82rem;
-  letter-spacing: 0.1em;
-  gap: 10px;
-}
-.proc-overlay.active { display: flex; }
-.spinner {
-  width: 16px; height: 16px;
-  border: 2px solid var(--green-dim);
-  border-top-color: var(--green);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── FIELD INDICATOR ── */
-#field-indicator {
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-  padding: 10px 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-#field-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-#field-name {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 1rem;
-  color: var(--amber);
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-#field-reading {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 1.4rem;
-  color: var(--green);
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-#field-reading.empty { color: var(--muted); font-size: 0.9rem; }
-#field-reading.err { color: var(--red); font-size: 0.75rem; }
-
-/* ── FIELD PROGRESS DOTS ── */
-#progress-dots {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  padding: 8px 14px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-  overflow-x: auto;
-}
-.dot-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  cursor: pointer;
-  flex-shrink: 0;
-  padding: 2px 4px;
-  border-radius: 3px;
-  transition: background 0.12s;
-}
-.dot-item:active { background: var(--faint); }
-.dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: var(--border);
-  border: 1px solid var(--muted);
-  transition: all 0.2s;
-}
-.dot.active { background: var(--amber); border-color: var(--amber); box-shadow: 0 0 6px var(--amber); }
-.dot.done { background: var(--green); border-color: var(--green); }
-.dot.skipped { background: var(--faint); border-color: var(--border); }
-.dot-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.55rem;
-  color: var(--muted);
-  letter-spacing: 0.04em;
-  text-align: center;
-  white-space: nowrap;
-}
-.dot-item.active-item .dot-label { color: var(--amber); }
-.dot-item.done-item .dot-label { color: var(--green); }
-
-/* ── CONTROLS ── */
-#controls {
-  display: flex;
-  gap: 7px;
-  padding: 9px 12px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.btn {
-  flex: 1;
-  padding: 10px 4px;
-  border: 1px solid var(--border);
-  background: var(--panel);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.12s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-}
-.btn .icon { font-size: 1rem; }
-.btn:active { transform: scale(0.96); }
-
-#btn-capture { border-color: var(--green-mid); }
-#btn-capture:active { background: var(--green-dim); }
-
-#btn-go { background: var(--green-dim); border-color: var(--green); color: var(--green); font-weight: 500; }
-#btn-go:active { background: var(--green-mid); }
-#btn-go:disabled { opacity: 0.3; cursor: default; }
-
-#btn-skip { }
-#btn-skip:active { background: var(--faint); }
-
-#btn-voice.listening { background: #1a0f0f; border-color: var(--red); color: var(--red); }
-#btn-voice.listening .icon { animation: pulse 1s infinite; }
+#controls { display:flex; gap:7px; padding:9px 12px; border-bottom:1px solid var(--border); flex-shrink:0; }
+.btn { flex:1; padding:11px 4px; border:1px solid var(--border); background:var(--panel); color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:500; letter-spacing:0.07em; text-transform:uppercase; border-radius:4px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; transition:all 0.12s; }
+.btn .icon { font-size:1.1rem; }
+.btn:active { transform:scale(0.96); }
+#btn-capture { border-color:var(--green-mid); }
+#btn-capture:active { background:var(--green-dim); }
+#btn-voice.listening { background:#1a0f0f; border-color:var(--red); color:var(--red); }
+#btn-voice.listening .icon { animation:pulse 1s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+#btn-next { border-color:#1a2a3a; }
+#btn-next:active { background:#0f1a2a; color:var(--blue); }
 
-#btn-submit { border-color: #1a2a3a; }
-#btn-submit:active { background: #0f1a2a; color: var(--blue); }
-#btn-submit.ready { background: #0f1e30; border-color: var(--blue); color: var(--blue); }
+#voice-text-row { display:none; padding:8px 12px; border-bottom:1px solid var(--border); flex-shrink:0; gap:8px; align-items:center; }
+#voice-text-row.visible { display:flex; }
+#voice-text-input { flex:1; background:var(--panel); border:1px solid var(--border); color:var(--text); font-family:'Share Tech Mono',monospace; font-size:0.9rem; padding:9px 12px; border-radius:3px; outline:none; }
+#voice-text-input:focus { border-color:var(--purple); }
+#voice-text-confirm { background:#1a1030; border:1px solid var(--purple); color:var(--purple); font-family:'DM Sans',sans-serif; font-size:0.78rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:9px 14px; border-radius:3px; cursor:pointer; white-space:nowrap; }
 
-/* ── STATUS ── */
-#status-bar {
-  padding: 5px 14px;
-  font-size: 0.7rem;
-  color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
-  border-bottom: 1px solid var(--border);
-  min-height: 22px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  flex-shrink: 0;
-}
-#status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
-#status-bar.ok #status-dot { background: var(--green); }
-#status-bar.warn #status-dot { background: var(--amber); }
-#status-bar.err #status-dot { background: var(--red); }
-#status-bar.ok { color: var(--green); }
-#status-bar.warn { color: var(--amber); }
-#status-bar.err { color: var(--red); }
+#dropdown-panel { display:none; flex-direction:column; background:var(--panel); border-bottom:1px solid var(--border); flex-shrink:0; max-height:36dvh; overflow-y:auto; }
+#dropdown-panel.visible { display:flex; }
+#dropdown-title { font-family:'Share Tech Mono',monospace; font-size:0.78rem; color:var(--blue); letter-spacing:0.1em; padding:8px 14px 5px; border-bottom:1px solid var(--border); }
+.dropdown-option { padding:13px 16px; font-size:1rem; color:var(--text); border-bottom:1px solid #1a201a; cursor:pointer; display:flex; align-items:center; gap:10px; }
+.dropdown-option:active { background:var(--faint); color:var(--green); }
+.dropdown-option.highlighted { background:#0f2a1a; color:var(--green); border-left:3px solid var(--green); padding-left:13px; }
+.dropdown-option .opt-num { font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--muted); min-width:20px; }
 
-/* ── SESSION LOG ── */
-#log-section {
-  flex: 1;
-  overflow-y: auto;
-  padding-bottom: 12px;
-}
-#log-header {
-  padding: 8px 14px 4px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  border-bottom: 1px solid var(--border);
-}
-.log-entry {
-  padding: 9px 14px;
-  border-bottom: 1px solid #111613;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-.log-entry:hover { background: #0f1410; }
-.log-num {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--muted);
-  padding-top: 2px;
-  min-width: 20px;
-}
-.log-vals {
-  flex: 1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px 10px;
-}
-.log-val {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.75rem;
-}
-.log-val .lv-key { color: var(--muted); font-size: 0.65rem; }
-.log-val .lv-num { color: var(--green); }
-.log-val .lv-skip { color: #2a3a2a; }
-.log-time {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.63rem;
-  color: var(--muted);
-  white-space: nowrap;
-  padding-top: 2px;
-}
-.log-status {
-  font-size: 0.68rem;
-  padding-top: 2px;
-  white-space: nowrap;
-}
-.log-status.sent { color: var(--green); }
-.log-status.fail { color: var(--red); }
-.log-status.pending { color: var(--amber); }
+#voice-heard-bar { display:none; padding:6px 14px; background:#0f0f1a; border-bottom:1px solid #2a2a4a; font-family:'Share Tech Mono',monospace; font-size:0.82rem; color:var(--purple); align-items:center; gap:8px; flex-shrink:0; }
+#voice-heard-bar.visible { display:flex; }
+#voice-heard-text { flex:1; font-style:italic; color:#8a6ab0; }
 
-/* ── VOICE HINT ── */
-#voice-hint {
-  display: none;
-  padding: 5px 14px;
-  background: #0b0f0b;
-  border-top: 1px solid var(--border);
-  font-size: 0.68rem;
-  color: var(--muted);
-  gap: 12px;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-}
-#voice-hint.visible { display: flex; }
-#voice-hint span { font-family: 'Share Tech Mono', monospace; color: #3a7a50; }
+#row-preview { padding:7px 14px; border-bottom:1px solid var(--border); display:flex; flex-wrap:wrap; gap:4px 10px; flex-shrink:0; min-height:32px; align-items:center; }
+.prev-val { font-family:'Share Tech Mono',monospace; font-size:0.78rem; }
+.prev-val .pk { color:var(--muted); font-size:0.68rem; }
+.prev-val .pv { color:var(--green); }
+.prev-val .ps { color:#232b25; }
+#row-preview-label { font-family:'Share Tech Mono',monospace; font-size:0.68rem; color:var(--muted); letter-spacing:0.08em; width:100%; margin-bottom:2px; }
 
-/* ── CURRENT ROW PREVIEW ── */
-#row-preview {
-  padding: 7px 14px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-  flex-shrink: 0;
-  min-height: 30px;
-  align-items: center;
-}
-.prev-val {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.7rem;
-}
-.prev-val .pk { color: var(--muted); font-size: 0.62rem; }
-.prev-val .pv { color: var(--green); }
-.prev-val .ps { color: #232b25; }
-#row-preview-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.62rem;
-  color: var(--muted);
-  letter-spacing: 0.08em;
-  width: 100%;
-  margin-bottom: 2px;
-}
+#status-bar { padding:6px 14px; font-size:0.82rem; color:var(--muted); font-family:'Share Tech Mono',monospace; border-bottom:1px solid var(--border); min-height:28px; display:flex; align-items:center; gap:7px; flex-shrink:0; }
+#status-dot { width:6px; height:6px; border-radius:50%; background:var(--muted); flex-shrink:0; }
+#status-bar.ok   { color:var(--green); } #status-bar.ok   #status-dot { background:var(--green); }
+#status-bar.warn { color:var(--amber); } #status-bar.warn #status-dot { background:var(--amber); }
+#status-bar.err  { color:var(--red);   } #status-bar.err  #status-dot { background:var(--red); }
+
+#log-section { flex:1; overflow-y:auto; padding-bottom:12px; }
+#log-header { padding:8px 14px 4px; font-family:'Share Tech Mono',monospace; font-size:0.75rem; color:var(--muted); letter-spacing:0.1em; border-bottom:1px solid var(--border); }
+.log-entry { padding:10px 14px; border-bottom:1px solid #111613; display:flex; align-items:flex-start; gap:10px; }
+.log-entry:hover { background:#0f1410; }
+.log-num { font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--muted); padding-top:2px; min-width:22px; }
+.log-vals { flex:1; display:flex; flex-wrap:wrap; gap:4px 10px; }
+.log-val { font-family:'Share Tech Mono',monospace; font-size:0.82rem; }
+.log-val .lv-key { color:var(--muted); font-size:0.7rem; }
+.log-val .lv-num { color:var(--green); }
+.log-time { font-family:'Share Tech Mono',monospace; font-size:0.7rem; color:var(--muted); white-space:nowrap; padding-top:2px; }
+.log-status { font-size:0.75rem; padding-top:2px; white-space:nowrap; }
+.log-status.sent { color:var(--green); }
+.log-status.fail { color:var(--red); }
+
+#voice-hint { display:none; padding:6px 14px; background:#0b0f0b; border-top:1px solid var(--border); font-size:0.78rem; color:var(--muted); gap:12px; flex-wrap:wrap; flex-shrink:0; }
+#voice-hint.visible { display:flex; }
+#voice-hint span { font-family:'Share Tech Mono',monospace; color:#3a7a50; }
 </style>
 </head>
 <body>
@@ -434,123 +141,133 @@ header .sub { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.06em; }
 <header>
   <div class="header-left">
     <h1>CALLIPER READER</h1>
-    <span class="sub">→ Sheets</span>
+    <span class="sub">Sheets sync</span>
   </div>
   <button id="auth-btn" onclick="handleAuth()">SIGN IN</button>
 </header>
 
-<!-- SETUP -->
 <div id="setup-screen">
   <h2>ANTHROPIC API KEY</h2>
-  <p>Enter your Claude API key to enable calliper vision reading. Your key stays in session memory only.</p>
-  <p style="font-size:0.75rem; color: #3a5a40;">Get one at <strong style="color:var(--green)">console.anthropic.com</strong></p>
-  <input type="password" id="api-key-input" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
+  <p>Enter your Claude API key to enable calliper vision reading. Stored in session memory only.</p>
+  <p style="font-size:0.85rem;color:#3a5a40">Get one at <strong style="color:var(--green)">console.anthropic.com</strong></p>
+  <input type="password" id="api-key-input" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
   <button class="setup-btn" onclick="startApp()">CONTINUE</button>
 </div>
 
-<!-- APP -->
 <div id="app">
-
-  <!-- Camera -->
   <div id="camera-wrap">
     <video id="video" autoplay playsinline muted></video>
     <canvas id="canvas"></canvas>
     <div class="guide">
       <div class="guide-box"></div>
-      <div class="corner tl"></div>
-      <div class="corner tr"></div>
-      <div class="corner bl"></div>
-      <div class="corner br"></div>
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
     </div>
     <div class="proc-overlay" id="proc-overlay">
-      <div class="spinner"></div> READING…
+      <div class="spinner"></div> READING...
     </div>
   </div>
 
-  <!-- Active field display -->
   <div id="field-indicator">
-    <span id="field-label">MEASURING</span>
-    <span id="field-name">—</span>
-    <span id="field-reading" class="empty">— capture —</span>
+    <span id="field-type-badge" class="camera">CAM</span>
+    <span id="field-name">-</span>
+    <span id="row-tag"></span>
+    <span id="field-reading" class="empty">-</span>
   </div>
 
-  <!-- Progress dots -->
   <div id="progress-dots"></div>
 
-  <!-- Controls -->
   <div id="controls">
-    <button class="btn" id="btn-capture" onclick="captureAndRead()">
-      <span class="icon">📷</span>CAPTURE
-    </button>
-    <button class="btn" id="btn-go" onclick="goRecord()" disabled>
-      <span class="icon">✓</span>GO
+    <button class="btn" id="btn-capture" onclick="handleCaptureBtn()">
+      <span class="icon">&#128247;</span>CAPTURE
     </button>
     <button class="btn" id="btn-skip" onclick="skipField()">
-      <span class="icon">⇥</span>SKIP
+      <span class="icon">&#8677;</span>SKIP
     </button>
     <button class="btn" id="btn-voice" onclick="toggleVoice()">
-      <span class="icon">🎙</span>VOICE
+      <span class="icon">&#127897;</span>VOICE
     </button>
-    <button class="btn" id="btn-submit" onclick="submitRow()">
-      <span class="icon">⬆</span>SUBMIT
+    <button class="btn" id="btn-next" onclick="nextRow()">
+      <span class="icon">&#8595;</span>NEXT ROW
     </button>
   </div>
 
-  <!-- Row preview -->
+  <div id="voice-text-row">
+    <input type="text" id="voice-text-input" placeholder="Type value here..." autocomplete="off">
+    <button id="voice-text-confirm" onclick="confirmVoiceText()">OK</button>
+  </div>
+
+  <div id="voice-heard-bar">
+    <span style="font-size:0.72rem;color:#5a3a8a;letter-spacing:0.08em">HEARD</span>
+    <span id="voice-heard-text">...</span>
+  </div>
+
+  <div id="dropdown-panel">
+    <div id="dropdown-title">SELECT OPTION</div>
+  </div>
+
   <div id="row-preview"><span id="row-preview-label">CURRENT ROW</span></div>
+  <div id="status-bar"><div id="status-dot"></div><span id="status-text">Initialising...</span></div>
 
-  <!-- Status -->
-  <div id="status-bar"><div id="status-dot"></div><span id="status-text">Initialising…</span></div>
-
-  <!-- Voice hint -->
   <div id="voice-hint">
-    Say: <span>"GO"</span> record &amp; advance · <span>"capture"</span> read · <span>"skip"</span> skip field · <span>"submit"</span> send row · <span>"reset"</span> new row
+    <span>"capture"</span> read camera &nbsp;
+    <span>"skip"</span> skip field &nbsp;
+    <span>"next"</span> new row &nbsp;
+    <span>"row 4"</span> jump to row &nbsp;
+    <span>"flint"</span> select option
   </div>
 
-  <!-- Log -->
   <div id="log-section">
     <div id="log-header">SESSION LOG</div>
   </div>
-
 </div>
 
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────────────────
-const SHEET_ID = '1vKwDBSEAeHK89kVBzJYwJ9v6CLb6BW1uVcReMIJQB80';
+const SHEET_ID   = '1vKwDBSEAeHK89kVBzJYwJ9v6CLb6BW1uVcReMIJQB80';
 const SHEET_NAME = 'Sheet1';
-const CLIENT_ID = '428537390023-cbnbqtd1f705pfhb6bsavr7qi5llkil1.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+const CLIENT_ID  = '428537390023-cbnbqtd1f705pfhb6bsavr7qi5llkil1.apps.googleusercontent.com';
+const SCOPES     = 'https://www.googleapis.com/auth/spreadsheets';
 
-// Fields: col is 0-indexed (A=0), so D=3, E=4, F=5, G=6, H=7, M=12
+// B=1, C=2, D=3, E=4, F=5, G=6, H=7, I=8, J=9, K=10, L=11, M=12
 const FIELDS = [
-  { key: 'height',     label: 'Height',          col: 3,  unit: 'mm' },
-  { key: 'width',      label: 'Width',            col: 4,  unit: 'mm' },
-  { key: 'mes_thick',  label: 'Mes Thickness',    col: 5,  unit: 'mm' },
-  { key: 'prox_thick', label: 'Prox Thickness',   col: 6,  unit: 'mm' },
-  { key: 'dist_thick', label: 'Dist Thickness',   col: 7,  unit: 'mm' },
-  { key: 'weight',     label: 'Weight',           col: 12, unit: 'g'  },
+  { key:'uid',       label:'Unique ID',        col:1,  type:'voice',    unit:'' },
+  { key:'height',    label:'Height',           col:2,  type:'camera',   unit:'mm' },
+  { key:'width',     label:'Width',            col:3,  type:'camera',   unit:'mm' },
+  { key:'mes_thick', label:'Mes Thickness',    col:4,  type:'camera',   unit:'mm' },
+  { key:'prox_thick',label:'Prox Thickness',   col:5,  type:'camera',   unit:'mm' },
+  { key:'dist_thick',label:'Dist Thickness',   col:6,  type:'camera',   unit:'mm' },
+  { key:'weight',    label:'Weight',           col:7,  type:'camera',   unit:'g'  },
+  { key:'material',  label:'Material',         col:8,  type:'dropdown', unit:'',
+    options:['flint','pitchstone','quartzite','jasper','basalt','other'] },
+  { key:'integrity', label:'Integrity',        col:9,  type:'dropdown', unit:'',
+    options:['complete','proximal','medial','distal'] },
+  { key:'col_patina',label:'Colour - Patina',  col:10, type:'dropdown', unit:'',
+    options:['orange','cream','light grey','dark grey','light brown','dark brown','black','white','pink'] },
+  { key:'col_raw',   label:'Colour - Raw Mat', col:11, type:'dropdown', unit:'',
+    options:['orange','cream','light grey','dark grey','light brown','dark brown','black','white','pink'] },
+  { key:'cortex',    label:'Cortex %',         col:12, type:'dropdown', unit:'',
+    options:['0','20%','40%','60%','80%','100%'] },
 ];
 
-// ── State ─────────────────────────────────────────────────────────────────────
-let apiKey = '';
-let accessToken = null;
+let apiKey          = '';
+let accessToken     = null;
 let currentFieldIdx = 0;
-let currentReading = null;
-let rowValues = {}; // key -> value string or null (null = skipped)
-let sessionLog = [];
-let voiceActive = false;
-let recognition = null;
+let currentRowNum   = null;
+let rowValues       = {};
+let sessionLog      = [];
+let voiceActive     = false;
+let recognition     = null;
 
 // ── Setup ─────────────────────────────────────────────────────────────────────
 function startApp() {
   const key = document.getElementById('api-key-input').value.trim();
-  if (!key.startsWith('sk-')) { alert('That doesn\'t look like a valid Anthropic API key.'); return; }
+  if (!key.startsWith('sk-')) { alert('That does not look like a valid Anthropic API key.'); return; }
   apiKey = key;
   document.getElementById('setup-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   initCamera();
   buildDots();
-  resetRow();
+  setActiveField(0);
   setStatus('Ready - sign in to Google to enable Sheets sync', 'warn');
 }
 
@@ -564,8 +281,7 @@ function handleAuth() {
     return;
   }
   const client = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
+    client_id: CLIENT_ID, scope: SCOPES,
     callback: (resp) => {
       if (resp.error) { setStatus('Auth error: ' + resp.error, 'err'); return; }
       accessToken = resp.access_token;
@@ -581,13 +297,43 @@ function handleAuth() {
 async function initCamera() {
   try {
     const s = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+      video: { facingMode:'environment', width:{ ideal:1920 }, height:{ ideal:1080 } }
     });
     document.getElementById('video').srcObject = s;
   } catch(e) { setStatus('Camera error: ' + e.message, 'err'); }
 }
 
-// ── Field Navigation ──────────────────────────────────────────────────────────
+function showCamera(show) {
+  document.getElementById('camera-wrap').classList.toggle('hidden', !show);
+}
+
+// ── Row targeting ─────────────────────────────────────────────────────────────
+async function findNextEmptyRow() {
+  if (!accessToken) return null;
+  try {
+    const range = encodeURIComponent(SHEET_NAME + '!B:B');
+    const resp = await fetch(
+      'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values/' + range,
+      { headers: { Authorization:'Bearer ' + accessToken } }
+    );
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+    return (data.values ? data.values.length : 0) + 1;
+  } catch(e) { setStatus('Could not find next row: ' + e.message, 'err'); return null; }
+}
+
+async function resolveRow() {
+  if (currentRowNum !== null) return currentRowNum;
+  const n = await findNextEmptyRow();
+  if (n) { currentRowNum = n; updateRowTag(); }
+  return n;
+}
+
+function updateRowTag() {
+  document.getElementById('row-tag').textContent = currentRowNum ? ('row ' + currentRowNum) : '';
+}
+
+// ── Field navigation ──────────────────────────────────────────────────────────
 function buildDots() {
   const container = document.getElementById('progress-dots');
   container.innerHTML = '';
@@ -596,7 +342,9 @@ function buildDots() {
     item.className = 'dot-item';
     item.id = 'dot-item-' + i;
     item.onclick = () => jumpToField(i);
-    item.innerHTML = `<div class="dot" id="dot-${i}"></div><div class="dot-label">${f.label.split(' ')[0].toUpperCase()}</div>`;
+    const dc = f.type === 'camera' ? 'camera-dot' : f.type === 'voice' ? 'voice-dot' : 'dropdown-dot';
+    item.innerHTML = '<div class="dot ' + dc + '" id="dot-' + i + '"></div>' +
+      '<div class="dot-label">' + f.label.split(' ')[0].slice(0,4).toUpperCase() + '</div>';
     container.appendChild(item);
   });
   updateDots();
@@ -604,15 +352,15 @@ function buildDots() {
 
 function updateDots() {
   FIELDS.forEach((f, i) => {
-    const dot = document.getElementById('dot-' + i);
+    const dot  = document.getElementById('dot-' + i);
     const item = document.getElementById('dot-item-' + i);
-    dot.className = 'dot';
+    const dc = f.type === 'camera' ? 'camera-dot' : f.type === 'voice' ? 'voice-dot' : 'dropdown-dot';
+    dot.className  = 'dot ' + dc;
     item.className = 'dot-item';
     if (i === currentFieldIdx) {
-      dot.classList.add('active');
-      item.classList.add('active-item');
+      dot.classList.add('active'); item.classList.add('active-item');
     } else if (rowValues[f.key] !== undefined) {
-      if (rowValues[f.key] === null) { dot.classList.add('skipped'); }
+      if (rowValues[f.key] === null) dot.classList.add('skipped');
       else { dot.classList.add('done'); item.classList.add('done-item'); }
     }
   });
@@ -620,97 +368,195 @@ function updateDots() {
 
 function setActiveField(idx) {
   currentFieldIdx = idx;
-  currentReading = null;
   const f = FIELDS[idx];
-  document.getElementById('field-name').textContent = f.label + ' (' + f.unit + ')';
-  document.getElementById('field-reading').textContent = '— capture —';
-  document.getElementById('field-reading').className = 'empty';
-  document.getElementById('btn-go').disabled = true;
+  const badge = document.getElementById('field-type-badge');
+  if (f.type === 'camera')   { badge.textContent = 'CAM';  badge.className = 'camera'; }
+  if (f.type === 'voice')    { badge.textContent = 'VOICE';badge.className = 'voice'; }
+  if (f.type === 'dropdown') { badge.textContent = 'LIST'; badge.className = 'dropdown'; }
+
+  document.getElementById('field-name').textContent = f.label + (f.unit ? ' (' + f.unit + ')' : '');
+
+  const hint = f.type === 'camera' ? '- capture -' :
+               f.type === 'voice'  ? '- say or type -' : '- say or tap -';
+  setFieldReading(hint, 'empty');
+
+  showCamera(f.type === 'camera');
+
+  // Show text input row for voice fields
+  const textRow = document.getElementById('voice-text-row');
+  if (f.type === 'voice') {
+    textRow.classList.add('visible');
+    document.getElementById('voice-text-input').value = '';
+    document.getElementById('voice-text-input').placeholder = 'Type ' + f.label + ' here...';
+    setStatus('Say or type the ' + f.label, '');
+  } else {
+    textRow.classList.remove('visible');
+  }
+
+  // Show dropdown for dropdown fields
+  if (f.type === 'dropdown') {
+    buildDropdown(f);
+    setStatus('Say the option name or tap it from the list', '');
+  } else {
+    document.getElementById('dropdown-panel').classList.remove('visible');
+  }
+
+  if (f.type === 'camera') {
+    setStatus('Point camera at calliper display and tap Capture', '');
+  }
+
   updateDots();
 }
 
 function jumpToField(idx) {
   setActiveField(idx);
-  setStatus('Jumped to: ' + FIELDS[idx].label, '');
+  setStatus('Field: ' + FIELDS[idx].label, '');
 }
 
 function advanceField() {
-  // Find next unfilled (not skipped, not done) field, or wrap
   for (let i = currentFieldIdx + 1; i < FIELDS.length; i++) {
     if (rowValues[FIELDS[i].key] === undefined) { setActiveField(i); return; }
   }
-  // All done - highlight submit
-  document.getElementById('btn-submit').classList.add('ready');
-  setStatus('All fields captured - tap SUBMIT to send to Sheets', 'ok');
+  setStatus('All fields done for row ' + currentRowNum + ' - tap NEXT ROW to continue', 'ok');
 }
 
-// ── Row Management ────────────────────────────────────────────────────────────
-function resetRow() {
+// ── Row management ────────────────────────────────────────────────────────────
+async function nextRow() {
   rowValues = {};
-  currentFieldIdx = 0;
-  currentReading = null;
+  currentRowNum = null;
+  updateRowTag();
   setActiveField(0);
-  document.getElementById('btn-submit').classList.remove('ready');
   updateRowPreview();
-  setStatus('New row ready', 'ok');
+  const n = await findNextEmptyRow();
+  if (n) { currentRowNum = n; updateRowTag(); }
+  setStatus('New row: ' + (currentRowNum || '?'), 'ok');
+}
+
+async function jumpToRow(n) {
+  rowValues = {};
+  currentRowNum = n;
+  updateRowTag();
+  setActiveField(0);
+  updateRowPreview();
+  setStatus('Targeting row ' + n, 'ok');
 }
 
 function updateRowPreview() {
   const container = document.getElementById('row-preview');
-  let html = '<span id="row-preview-label">CURRENT ROW</span>';
+  let html = '<span id="row-preview-label">ROW ' + (currentRowNum || '?') + '</span>';
   FIELDS.forEach(f => {
     const val = rowValues[f.key];
+    const k = f.label.split(' ')[0].slice(0, 3).toUpperCase();
     if (val === undefined) {
-      html += `<span class="prev-val"><span class="pk">${f.label.split(' ')[0].toUpperCase()[0]+f.key.slice(-1).toUpperCase()}</span><span class="ps"> —</span></span>`;
+      html += '<span class="prev-val"><span class="pk">' + k + '</span><span class="ps"> -</span></span>';
     } else if (val === null) {
-      html += `<span class="prev-val"><span class="pk">${f.key.slice(0,3).toUpperCase()}</span><span class="ps"> skip</span></span>`;
+      html += '<span class="prev-val"><span class="pk">' + k + '</span><span class="ps"> ~</span></span>';
     } else {
-      html += `<span class="prev-val"><span class="pk">${f.label.split(' ')[0].slice(0,3).toUpperCase()} </span><span class="pv">${val}</span></span>`;
+      html += '<span class="prev-val"><span class="pk">' + k + ' </span><span class="pv">' + val + '</span></span>';
     }
   });
   container.innerHTML = html;
 }
 
-// ── Capture & Read ────────────────────────────────────────────────────────────
+// ── Write single cell to Sheets ───────────────────────────────────────────────
+async function writeCell(field, value) {
+  if (!accessToken) return false;
+  try {
+    const col = colIndexToLetter(field.col);
+    const cellRange = encodeURIComponent(SHEET_NAME + '!' + col + currentRowNum);
+    const resp = await fetch(
+      'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values/' + cellRange + '?valueInputOption=USER_ENTERED',
+      {
+        method: 'PUT',
+        headers: { Authorization:'Bearer ' + accessToken, 'Content-Type':'application/json' },
+        body: JSON.stringify({ values: [[parseFloat(value) == value ? parseFloat(value) : value]] })
+      }
+    );
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+    return true;
+  } catch(e) { setStatus('Sheet write error: ' + e.message, 'err'); return false; }
+}
+
+// ── Record a value for the current field ──────────────────────────────────────
+async function recordValue(value) {
+  if (currentRowNum === null) {
+    setStatus('Finding row...', 'warn');
+    const n = await resolveRow();
+    if (!n) return;
+  }
+
+  const f = FIELDS[currentFieldIdx];
+  rowValues[f.key] = value;
+  updateRowPreview();
+
+  const col = colIndexToLetter(f.col);
+  setFieldReading(value, '');
+
+  const ok = await writeCell(f, value);
+
+  const entry = {
+    n: sessionLog.length + 1,
+    field: f.label, value: value, row: currentRowNum, col: col,
+    time: new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' }),
+    status: ok ? 'sent' : 'fail'
+  };
+  sessionLog.push(entry);
+  addLogEntry(entry);
+
+  if (ok) {
+    setStatus(f.label + ': ' + value + ' written to ' + col + currentRowNum, 'ok');
+  }
+  advanceField();
+}
+
+// ── Camera capture ────────────────────────────────────────────────────────────
+function handleCaptureBtn() {
+  const f = FIELDS[currentFieldIdx];
+  if (f.type === 'camera') { captureAndRead(); }
+  else if (f.type === 'voice') { document.getElementById('voice-text-input').focus(); }
+  else { setStatus('Tap an option from the list, or say its name', ''); }
+}
+
 async function captureAndRead() {
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
+  const video   = document.getElementById('video');
+  const canvas  = document.getElementById('canvas');
   const overlay = document.getElementById('proc-overlay');
   if (!video.srcObject) { setStatus('No camera', 'err'); return; }
 
-  canvas.width = video.videoWidth;
+  if (currentRowNum === null) {
+    setStatus('Finding row...', 'warn');
+    const n = await resolveRow();
+    if (!n) return;
+  }
+
+  canvas.width  = video.videoWidth;
   canvas.height = video.videoHeight;
   canvas.getContext('2d').drawImage(video, 0, 0);
   const imageData = canvas.toDataURL('image/jpeg', 0.92).split(',')[1];
 
   overlay.classList.add('active');
-  setStatus('Reading display…', 'warn');
-  setFieldReading('reading…', 'empty');
-
-  const currentField = FIELDS[currentFieldIdx];
+  const f = FIELDS[currentFieldIdx];
+  setStatus('Reading ' + f.label + '...', 'warn');
+  setFieldReading('reading...', 'empty');
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type':'application/json',
         'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-5',
+        model: 'claude-haiku-4-5',
         max_tokens: 128,
         messages: [{
           role: 'user',
           content: [
-            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageData } },
-            { type: 'text', text: `Read the digital calliper display in this photo. I am measuring: ${currentField.label} (expected unit: ${currentField.unit}).
-
-Reply ONLY with JSON, no other text:
-{"value": "12.34", "unit": "mm", "confidence": "high"}
-
-If unreadable: {"value": null, "unit": "${currentField.unit}", "confidence": "low"}` }
+            { type:'image', source:{ type:'base64', media_type:'image/jpeg', data:imageData } },
+            { type:'text', text:'Read the digital calliper display in this photo. Measuring: ' + f.label + ' (expected unit: ' + f.unit + ').\n\nReply ONLY with JSON, nothing else:\n{"value":"12.34","unit":"mm","confidence":"high"}\n\nIf unreadable: {"value":null,"unit":"' + f.unit + '","confidence":"low"}' }
           ]
         }]
       })
@@ -722,181 +568,76 @@ If unreadable: {"value": null, "unit": "${currentField.unit}", "confidence": "lo
     let parsed;
     try {
       const text = data.content[0].text.trim();
-      parsed = JSON.parse(text.match(/\{.*\}/s)?.[0] || text);
-    } catch { throw new Error('Could not parse vision response'); }
+      parsed = JSON.parse((text.match(/\{[\s\S]*\}/) || [text])[0]);
+    } catch(e) { throw new Error('Could not parse vision response'); }
 
     if (!parsed.value) {
       setFieldReading('no reading', 'err');
       setStatus('Could not read display - reposition and try again', 'warn');
-      currentReading = null;
-      document.getElementById('btn-go').disabled = true;
-    } else {
-      currentReading = parsed.value;
-      setFieldReading(parsed.value + ' ' + (parsed.unit || currentField.unit), '');
-      document.getElementById('btn-go').disabled = false;
-      setStatus('Read: ' + parsed.value + ' ' + (parsed.unit || currentField.unit) + ' — say GO or tap GO to record', 'ok');
+      return;
     }
+
+    await recordValue(parsed.value);
 
   } catch(e) {
     setFieldReading('error', 'err');
     setStatus('Error: ' + e.message, 'err');
-    currentReading = null;
-    document.getElementById('btn-go').disabled = true;
   } finally {
     overlay.classList.remove('active');
   }
 }
 
-// ── GO - record current reading ───────────────────────────────────────────────
-function goRecord() {
-  if (!currentReading) { setStatus('Nothing to record - capture first', 'warn'); return; }
-  const f = FIELDS[currentFieldIdx];
-  rowValues[f.key] = currentReading;
-  setStatus('Recorded ' + f.label + ': ' + currentReading, 'ok');
-  updateRowPreview();
-  advanceField();
+// ── Dropdown ──────────────────────────────────────────────────────────────────
+function buildDropdown(field) {
+  const panel = document.getElementById('dropdown-panel');
+  document.getElementById('dropdown-title').textContent = field.label.toUpperCase() + ' - tap or say option';
+  // Remove old options
+  const old = panel.querySelectorAll('.dropdown-option');
+  old.forEach(o => o.remove());
+
+  field.options.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'dropdown-option';
+    div.id = 'opt-' + i;
+    div.innerHTML = '<span class="opt-num">' + (i + 1) + '</span>' + opt;
+    div.onclick = () => selectDropdownOption(opt);
+    panel.appendChild(div);
+  });
+  panel.classList.add('visible');
 }
 
+function highlightDropdownOption(opt) {
+  const f = FIELDS[currentFieldIdx];
+  if (f.type !== 'dropdown') return;
+  f.options.forEach((o, i) => {
+    const el = document.getElementById('opt-' + i);
+    if (el) el.classList.toggle('highlighted', o === opt);
+  });
+}
+
+async function selectDropdownOption(value) {
+  highlightDropdownOption(value);
+  await recordValue(value);
+}
+
+// ── Voice text field (for Unique ID etc) ──────────────────────────────────────
+function confirmVoiceText() {
+  const val = document.getElementById('voice-text-input').value.trim();
+  if (!val) { setStatus('Please enter a value', 'warn'); return; }
+  recordValue(val);
+}
+
+// ── Skip ──────────────────────────────────────────────────────────────────────
 function skipField() {
   const f = FIELDS[currentFieldIdx];
   rowValues[f.key] = null;
-  setStatus('Skipped: ' + f.label, '');
   updateRowPreview();
+  setStatus('Skipped: ' + f.label, '');
   advanceField();
 }
 
-// ── Submit Row to Sheets ──────────────────────────────────────────────────────
-async function submitRow() {
-  const hasAny = Object.values(rowValues).some(v => v !== null && v !== undefined);
-  if (!hasAny) { setStatus('No measurements to submit', 'warn'); return; }
-
-  if (!accessToken) {
-    setStatus('Not signed in to Google - tap SIGN IN first', 'err');
-    return;
-  }
-
-  setStatus('Finding next empty row…', 'warn');
-
-  try {
-    // 1. Find next empty row by reading column D
-    const rangeCheck = encodeURIComponent(`${SHEET_NAME}!D:D`);
-    const checkResp = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${rangeCheck}`,
-      { headers: { Authorization: 'Bearer ' + accessToken } }
-    );
-    const checkData = await checkResp.json();
-    if (checkData.error) throw new Error(checkData.error.message);
-
-    const existingRows = checkData.values ? checkData.values.length : 0;
-    const targetRow = existingRows + 1; // next empty row (1-indexed)
-
-    // 2. Build sparse row update - use individual cell updates to avoid overwriting other columns
-    const requests = [];
-    FIELDS.forEach(f => {
-      const val = rowValues[f.key];
-      if (val !== null && val !== undefined) {
-        const colLetter = colIndexToLetter(f.col);
-        const cellRange = `${SHEET_NAME}!${colLetter}${targetRow}`;
-        requests.push({ range: cellRange, values: [[parseFloat(val) || val]] });
-      }
-    });
-
-    if (requests.length === 0) { setStatus('Nothing to write', 'warn'); return; }
-
-    // 3. Batch update
-    const updateResp = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values:batchUpdate`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + accessToken,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          valueInputOption: 'USER_ENTERED',
-          data: requests
-        })
-      }
-    );
-    const updateData = await updateResp.json();
-    if (updateData.error) throw new Error(updateData.error.message);
-
-    // 4. Log entry
-    const entry = {
-      n: sessionLog.length + 1,
-      row: targetRow,
-      values: { ...rowValues },
-      time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-      status: 'sent'
-    };
-    sessionLog.push(entry);
-    addLogEntry(entry);
-
-    setStatus('Row ' + targetRow + ' written to Sheet1 ✓', 'ok');
-    resetRow();
-
-  } catch(e) {
-    // Log as failed
-    const entry = {
-      n: sessionLog.length + 1,
-      row: '?',
-      values: { ...rowValues },
-      time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-      status: 'fail',
-      error: e.message
-    };
-    sessionLog.push(entry);
-    addLogEntry(entry);
-    setStatus('Sheets error: ' + e.message, 'err');
-  }
-}
-
-function colIndexToLetter(idx) {
-  // 0-indexed column to letter: 0=A, 1=B ... 25=Z, 26=AA etc.
-  let result = '';
-  let n = idx;
-  while (n >= 0) {
-    result = String.fromCharCode(65 + (n % 26)) + result;
-    n = Math.floor(n / 26) - 1;
-  }
-  return result;
-}
-
-// ── Session Log ───────────────────────────────────────────────────────────────
-function addLogEntry(entry) {
-  const section = document.getElementById('log-section');
-  const div = document.createElement('div');
-  div.className = 'log-entry';
-
-  let valsHtml = '';
-  FIELDS.forEach(f => {
-    const v = entry.values[f.key];
-    if (v === undefined) return;
-    valsHtml += `<span class="log-val"><span class="lv-key">${f.label.split(' ')[0].slice(0,4).toUpperCase()} </span>`;
-    if (v === null) valsHtml += `<span class="lv-skip">—</span>`;
-    else valsHtml += `<span class="lv-num">${v}</span>`;
-    valsHtml += `</span>`;
-  });
-
-  const statusClass = entry.status === 'sent' ? 'sent' : entry.status === 'fail' ? 'fail' : 'pending';
-  const statusText = entry.status === 'sent' ? '✓ row ' + entry.row : entry.status === 'fail' ? '✗ failed' : '…';
-
-  div.innerHTML = `
-    <span class="log-num">${entry.n}</span>
-    <div class="log-vals">${valsHtml}</div>
-    <span class="log-time">${entry.time}</span>
-    <span class="log-status ${statusClass}">${statusText}</span>
-  `;
-
-  // Insert after header
-  const header = document.getElementById('log-header');
-  header.after(div);
-}
-
 // ── Voice ─────────────────────────────────────────────────────────────────────
-function toggleVoice() {
-  voiceActive ? stopVoice() : startVoice();
-}
+function toggleVoice() { voiceActive ? stopVoice() : startVoice(); }
 
 function startVoice() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -907,6 +648,7 @@ function startVoice() {
   recognition.lang = 'en-GB';
   recognition.onresult = e => {
     const t = e.results[e.results.length - 1][0].transcript.trim().toLowerCase();
+    showHeard(t);
     handleVoice(t);
   };
   recognition.onerror = e => { if (e.error === 'not-allowed') stopVoice(); };
@@ -915,7 +657,7 @@ function startVoice() {
   voiceActive = true;
   document.getElementById('btn-voice').classList.add('listening');
   document.getElementById('voice-hint').classList.add('visible');
-  setStatus('Voice active - say GO to record', 'ok');
+  setStatus('Voice active', 'ok');
 }
 
 function stopVoice() {
@@ -923,34 +665,106 @@ function stopVoice() {
   voiceActive = false;
   document.getElementById('btn-voice').classList.remove('listening');
   document.getElementById('voice-hint').classList.remove('visible');
+  document.getElementById('voice-heard-bar').classList.remove('visible');
   setStatus('Voice off', '');
 }
 
-function handleVoice(text) {
-  if (text.includes('go')) { goRecord(); }
-  else if (text.includes('capture') || text.includes('read') || text.includes('scan')) { captureAndRead(); }
-  else if (text.includes('skip')) { skipField(); }
-  else if (text.includes('submit') || text.includes('send')) { submitRow(); }
-  else if (text.includes('reset') || text.includes('new row') || text.includes('next')) { resetRow(); }
+function showHeard(text) {
+  const bar = document.getElementById('voice-heard-bar');
+  document.getElementById('voice-heard-text').textContent = text;
+  bar.classList.add('visible');
+  clearTimeout(bar._hideTimer);
+  bar._hideTimer = setTimeout(() => bar.classList.remove('visible'), 3000);
 }
 
-// ── UI Helpers ────────────────────────────────────────────────────────────────
+function handleVoice(text) {
+  // Navigation commands - check these first
+  const rowMatch = text.match(/row\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)/);
+  if (rowMatch) {
+    const words = {one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,
+                   eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,
+                   seventeen:17,eighteen:18,nineteen:19,twenty:20};
+    const n = parseInt(rowMatch[1]) || words[rowMatch[1]];
+    if (n) { jumpToRow(n); return; }
+  }
+  if (text === 'next' || text === 'next row') { nextRow(); return; }
+  if (text === 'skip' || text === 'skip field') { skipField(); return; }
+  if (text.includes('capture') || text.includes('read') || text.includes('scan')) {
+    if (FIELDS[currentFieldIdx].type === 'camera') { captureAndRead(); return; }
+  }
+
+  // Dropdown selection
+  const f = FIELDS[currentFieldIdx];
+  if (f.type === 'dropdown') {
+    const match = fuzzyMatchOption(text, f.options);
+    if (match.exact || match.best) {
+      selectDropdownOption(match.exact || match.best);
+      return;
+    }
+    // No match - show options
+    setStatus('Not recognised. Options: ' + f.options.join(', '), 'warn');
+    buildDropdown(f);
+    return;
+  }
+
+  // Voice/text field - anything spoken becomes the value
+  if (f.type === 'voice') {
+    // Put it in the text box so user can confirm
+    document.getElementById('voice-text-input').value = text;
+    setStatus('Heard: "' + text + '" - tap OK to confirm or correct it', 'warn');
+    return;
+  }
+}
+
+function fuzzyMatchOption(text, options) {
+  // Exact match first
+  const exact = options.find(o => text === o || text.includes(o) || o.includes(text));
+  if (exact) return { exact };
+  // Partial word match
+  const words = text.split(' ');
+  let best = null;
+  let bestScore = 0;
+  options.forEach(o => {
+    const oWords = o.split(' ');
+    let score = 0;
+    oWords.forEach(ow => { if (words.some(w => w === ow || ow.startsWith(w) || w.startsWith(ow))) score++; });
+    if (score > bestScore) { bestScore = score; best = o; }
+  });
+  return bestScore > 0 ? { best } : {};
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function colIndexToLetter(idx) {
+  let result = ''; let n = idx;
+  while (n >= 0) { result = String.fromCharCode(65 + (n % 26)) + result; n = Math.floor(n / 26) - 1; }
+  return result;
+}
+
+function addLogEntry(entry) {
+  const div = document.createElement('div');
+  div.className = 'log-entry';
+  div.innerHTML =
+    '<span class="log-num">' + entry.n + '</span>' +
+    '<div class="log-vals"><span class="log-val"><span class="lv-key">' +
+    entry.field.split(' ')[0].toUpperCase() + ' </span><span class="lv-num">' +
+    entry.value + '</span></span></div>' +
+    '<span class="log-time">' + entry.col + entry.row + ' &nbsp; ' + entry.time + '</span>' +
+    '<span class="log-status ' + entry.status + '">' + (entry.status === 'sent' ? 'ok' : 'fail') + '</span>';
+  document.getElementById('log-header').after(div);
+}
+
 function setFieldReading(text, state) {
   const el = document.getElementById('field-reading');
-  el.textContent = text;
-  el.className = state || '';
+  el.textContent = text; el.className = state || '';
 }
 
 function setStatus(msg, type) {
   document.getElementById('status-text').textContent = msg;
-  const bar = document.getElementById('status-bar');
-  bar.className = type ? type : '';
+  document.getElementById('status-bar').className = type || '';
 }
 
-// Enter key on setup
-document.getElementById('api-key-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') startApp();
-});
+document.getElementById('api-key-input').addEventListener('keydown', e => { if (e.key === 'Enter') startApp(); });
+document.getElementById('voice-text-input').addEventListener('keydown', e => { if (e.key === 'Enter') confirmVoiceText(); });
 </script>
 </body>
 </html>
