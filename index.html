@@ -705,12 +705,12 @@ function startVoice() {
   recognition.onerror = e => {
     // Ignore no-speech errors silently - don't restart
     if (e.error === 'not-allowed') { stopVoice(); return; }
-    // For other errors, wait 2 seconds then try once more - no rapid loop
+    // For other errors, wait 5 seconds then try once more - no rapid loop
     if (voiceActive && e.error !== 'no-speech') {
       clearTimeout(voiceRestartTimer);
       voiceRestartTimer = setTimeout(() => {
         if (voiceActive) try { recognition.start(); } catch(ex) {}
-      }, 2000);
+      }, 5000);
     }
   };
 
