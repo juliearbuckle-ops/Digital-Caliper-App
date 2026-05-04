@@ -1,7 +1,7 @@
-CALLIPER READER
+CALLIPER READER ==TESTING== ==NOT PUBLIC!==
 ===============
-A phone-based tool for recording digital calliper measurements directly into
-Google Sheets. Point your camera at the calliper display, and the app reads
+A phone-based tool for recording digital calliper and weigh scale measurements directly into
+Google Sheets. Point your camera at the calliper display, say "Capture", and the app reads
 the number and logs it to the right cell automatically. Dropdown fields for
 material, integrity, colour and cortex % are voice-activated too.
 
@@ -30,14 +30,17 @@ The app steps through fields in order:
   then: Material - Integrity - Colour Patina - Colour Raw Mat - Cortex %
 
 For camera fields (measurements):
-  - Hold the phone over the calliper display
+  - Hold the phone over the calliper display, you may need to tilt it slightly to reduce reflections. 
   - Keep the number inside the green guide box
-  - Tap CAPTURE - the reading is logged and the app moves to the next field
+  - Tap or say CAPTURE (you'll need to select the VOICE button first)- the reading is logged and the app moves to the next field
+
+!CAUTION!
+ - the app works with an OCR (Optical Character Recognition) protocol which can struggle with some LCD displays. Please ensure an accurate reading before recording the next measurement. Click back on the relevant button to re-record. You can type it in manually on the phone screen if needed.
 
 For dropdown fields:
   - Tap the option from the list, or say its name (e.g. "flint", "proximal")
 
-When a row is complete, tap NEXT ROW to move on.
+When a row is complete, tap NEXT ROW to move on, or say "NEXT".
 
 
 VOICE COMMANDS
@@ -53,8 +56,8 @@ Turn on with the VOICE button. Say:
 
 TIPS
 ----
-- Good lighting makes a big difference for the camera reading
-- Fill the green guide box with the display for best results
+- Good lighting makes a big difference for the camera reading. This doesn't necessarily mean bright lighting, but the least amount of reflections and highest contrast conditions for the display.
+- Fill the green guide box with the display for best results. Tilt the device slightly to get the clearest image. 
 - If a reading looks wrong, tap the dot for that field to go back and recapture
 - Column B (Unique ID) is filled in manually in the sheet - the app skips it
 - The session log at the bottom confirms every cell written
